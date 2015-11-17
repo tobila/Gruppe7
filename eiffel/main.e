@@ -16,38 +16,13 @@ feature {NONE}
 --commentar
 	make
 		local
-			b: BINARYTREE
-			n:INTEGER
+			--b: BINARYTREE
 
 		do
-			create a.make_empty
-			a.force (3, 1)
-			a.force (5, 2)
-			a.force (2, 3)
-			a.force (7, 4)
-			a.force (50, 5)
 
-			create prob.make
+			TreeGPS
+			FacultyGPS
 
-			prob.set_tree (a)
-			print("FIND: ")
-			print(prob.find)
-			io.new_line
-			print("TREE CONTAINS FIND? ")
-			print(prob.solition.get_has)
-io.new_line
-			create Facultyprob.make
-			n:=5
-			Print("Test")
-io.new_line
-			Facultyprob.set_n(n)
-			Print("The result of faculty ")
-			Print (n)
-			Print(" is: ")
-			Print (Facultyprob.get_sol.out)
-
-
---
 --			create b.make (50)
 --			b.insert (40)
 --			b.insert (30)
@@ -97,11 +72,65 @@ io.new_line
 
 	feature
 		a: ARRAY[INTEGER]
-		prob: SEARCHTREEPROBLEM
+		treeProb: SEARCHTREEPROBLEM
+		facultyProb: FACULTYPROBLEM
 
-		Facultyprob:FACULTYPROBLEM
 
-end
+	feature --Tree General Problem Solver
+		TreeGPS
+		local
+			i: INTEGER
+		do
+			create a.make_empty
+			print("***CREATE NEW BINARYTREE***")
+			io.new_line
+			print("ENTER ROOT: ")
+			io.read_integer
+			a.force (io.last_integer, 1) --root
+			print("ENTER NODES (to finish enter 'X'): ")
+			from
+	        	io.read_line
+	        	i:=2
+	     	until
+	     		--io.last_string.as_upper = 'X'
+	     		i>=5
+	    	loop
+	       		io.read_line
+	       		a.force (io.last_string.to_integer, i)
+	       		i:=i+1
+	     	end -- user has typed the character 'x' or 'X'
 
- -- class MAIN
+			print("ENTER SEARCH ELEMENT: ")
+			io.read_integer
+			a.force (io.last_integer, i)
+			create treeProb.make
 
+			treeProb.set_tree (a)
+			print("FIND: ")
+			print(treeProb.find)
+			io.new_line
+			print("TREE CONTAINS FIND? ")
+			print(treeProb.solition.get_has)
+		end
+
+
+		feature --Faculty General Problem Solver
+			FacultyGPS
+			local
+				n: INTEGER
+			do
+				create facultyProb.make
+				io.new_line
+				io.new_line
+				print("ENTER NUMBER FOR FACULTY: ")
+				io.read_integer
+				n:=io.last_integer
+				facultyProb.set_n(n)
+				print("The result of faculty ")
+				print (n)
+				print(" is: ")
+				print (facultyProb.get_sol.out)
+			end
+
+
+end -- class MAIN

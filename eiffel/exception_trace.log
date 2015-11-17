@@ -114,3 +114,23 @@ MAIN                make @2
 MAIN                root's creation                                     
 <00000000037155A8>                         Routine failure.              Exit
 -------------------------------------------------------------------------------
+
+binarytree: system execution failed.
+Following is the set of recorded exceptions:
+
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+STRING_8            to_integer @1          is_integer:                  
+<0000000003819B98>  (From READABLE_STRING_GENERAL)
+                                           Precondition violated.        Fail
+-------------------------------------------------------------------------------
+MAIN                treegps @12                                         
+<00000000038195A8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+MAIN                make @1                                             
+<00000000038195A8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+MAIN                root's creation                                     
+<00000000038195A8>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
