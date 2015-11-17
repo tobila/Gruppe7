@@ -17,6 +17,7 @@ feature {NONE}
 	make
 		local
 			b: BINARYTREE
+			n:INTEGER
 
 		do
 			create a.make_empty
@@ -34,7 +35,16 @@ feature {NONE}
 			io.new_line
 			print("TREE CONTAINS FIND? ")
 			print(prob.solition.get_has)
-
+io.new_line
+			create Facultyprob.make
+			n:=5
+			Print("Test")
+io.new_line
+			Facultyprob.set_n(n)
+			Print("The result of faculty ")
+			Print (n)
+			Print(" is: ")
+			Print (Facultyprob.get_sol.out)
 
 
 --
@@ -88,6 +98,8 @@ feature {NONE}
 	feature
 		a: ARRAY[INTEGER]
 		prob: SEARCHTREEPROBLEM
+
+		Facultyprob:FACULTYPROBLEM
 
 end
 
