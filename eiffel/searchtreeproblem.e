@@ -18,9 +18,9 @@ create
 	make
 
 feature-- Constructor
-	make (value: STRING)
+	make 
 		do
-		 set_tree(value)
+			create solution.make
 		end
 
 
@@ -29,7 +29,7 @@ feature--variable
 	find:INTEGER
 	b:detachable BINARYTREE
 	root:detachable NODE
-	tree:detachable ARRAYED_LIST[INTEGER]
+
 
 feature --redefine solition
 
@@ -44,15 +44,15 @@ feature --check_Solvability
 
 	if not attached root as rootSafe then
 
-				direcltysolvable.set_item (TRUE)
+				direcltysolvable.set_item (True)
 				solution.set_has (False)
 		end
 	if attached root as rootSafe then
-	if
-		rootSafe.getvalue= find
-	 then
-		direcltySolvable.set_item (TRUE)
-	 	solution.set_has(True)
+			if
+			rootSafe.getvalue= find
+			then
+			direcltySolvable.set_item (TRUE)
+		 	solution.set_has(True)
 
 		end
 	end
@@ -74,48 +74,33 @@ feature --redefine divide
 
 
 feature -- set_tree
-	set_tree (numbers: STRING)
+	set_tree (numbers:  ARRAYED_LIST[INTEGER])
+
 		local
-			l:LIST[STRING]
 			i:INTEGER
+		do
+			create b.make (numbers.first)
+			find:=numbers.last
 
-			do
-				create solution.make
-				create tree.make (0)
-				if attached tree as treeSafe then
-		from
+			if attached b as bSafe then
 
-			treeSafe.start
+			from
+				i:=2
 
-		until
+			until
+				i < numbers.count
+			loop
 
-			treeSafe.after
+				bSafe.insert (numbers.array_at (i))
+			end
 
-		loop
-
-			l:=	numbers.split (' ')
-			treeSafe.put (i.to_integer)
-
-
+				root:= bSafe.getroot
+				direcltysolvable.set_item (FALSE)
+				compute_Solution
+			end
 		end
-		if attached b as bSafe then
-		bSafe.insert (treeSafe.array_item (1))
 
-		from
-			i:=2
-		until
-			i<treeSafe.count -1
-		loop
-			bSafe.insert(treeSafe.at (i))
-			i:=i+1
-		end
-	root:= bSafe.getroot
-	find:= treeSafe.last
-	direcltysolvable.set_item (FALSE)
-	compute_Solution
-	end
-end
-end
+
 
 
 feature -- get_find

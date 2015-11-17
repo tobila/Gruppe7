@@ -15,22 +15,52 @@ create
 feature {NONE}
 --commentar
 	make
-		local
-			b: BINARYTREE
 
-		do
 
-			create b.make (50)
-			b.insert (40)
-			b.insert (30)
-			b.insert (60)
-		print(	b.remove (50))
+--do
+--create list.make
+--create prob.make
 
-			if attached b.getroot as x then
-				if attached x.getrightnode as x2 then
-					print(x2.getvalue)
-				end
-			end
+--list.put_i_th (4, 1)
+--list.put_i_th (3, 2)
+--list.put_i_th (8, 3)
+--list.put_i_th (2, 4)
+--list.put_i_th (1, 5)
+
+
+
+--prob.set_tree (list)
+--		print (list.first.out)
+--		print (list.last.out)
+
+	--	print (prob.solition.get_has.out)
+	end
+
+
+feature-- var
+
+	--	prob:  SEARCHTREEPROBLEM
+		list:  ARRAYED_LIST[INTEGER]
+
+
+
+
+	--	local
+	--		b: BINARYTREE
+
+	--	do
+--
+--			create b.make (50)
+--			b.insert (40)
+--			b.insert (30)
+--			b.insert (60)
+--		print(	b.remove (50))
+
+--			if attached b.getroot as x then
+--				if attached x.getrightnode as x2 then
+--					print(x2.getvalue)
+--				end
+--			end
 --			b.insert (60)
 --			b.insert (55)
 --			b.insert (53)
@@ -67,5 +97,5 @@ feature {NONE}
 
 	end
 
-end -- class MAIN
+ -- class MAIN
 
