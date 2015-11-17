@@ -5,7 +5,7 @@ create
 	make
 
 feature
-
+--commentar
 	make (local_value: INTEGER_32; local_parent: detachable NODE)
 		do
 			value := local_value

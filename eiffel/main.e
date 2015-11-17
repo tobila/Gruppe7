@@ -13,7 +13,7 @@ create
 	make
 
 feature {NONE}
-
+--commentar
 	make
 		local
 			b: BINARYTREE

@@ -13,7 +13,7 @@ create
 	make
 
 feature --Constructor
-
+--commentar
 	make (value: INTEGER_32)
 		do
 			create root.make (value, Void)
