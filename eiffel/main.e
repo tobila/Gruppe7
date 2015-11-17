@@ -15,40 +15,28 @@ create
 feature {NONE}
 --commentar
 	make
+		local
+			b: BINARYTREE
 
+		do
+			create a.make_empty
+			a.force (3, 1)
+			a.force (5, 2)
+			a.force (2, 3)
+			a.force (7, 4)
+			a.force (50, 5)
 
---do
---create list.make
---create prob.make
+			create prob.make
 
---list.put_i_th (4, 1)
---list.put_i_th (3, 2)
---list.put_i_th (8, 3)
---list.put_i_th (2, 4)
---list.put_i_th (1, 5)
-
-
-
---prob.set_tree (list)
---		print (list.first.out)
---		print (list.last.out)
-
-	--	print (prob.solition.get_has.out)
-	end
-
-
-feature-- var
-
-	--	prob:  SEARCHTREEPROBLEM
-		list:  ARRAYED_LIST[INTEGER]
+			prob.set_tree (a)
+			print("FIND: ")
+			print(prob.find)
+			io.new_line
+			print("TREE CONTAINS FIND? ")
+			print(prob.solition.get_has)
 
 
 
-
-	--	local
-	--		b: BINARYTREE
-
-	--	do
 --
 --			create b.make (50)
 --			b.insert (40)
@@ -96,6 +84,12 @@ feature-- var
 
 
 	end
+
+	feature
+		a: ARRAY[INTEGER]
+		prob: SEARCHTREEPROBLEM
+
+end
 
  -- class MAIN
 

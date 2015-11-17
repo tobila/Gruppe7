@@ -28,21 +28,22 @@ feature --check_Solvability, divide ,compute_Solution
 
 
 	compute_Solution
-	local break:BOOLEAN
-	do
+		local break:BOOLEAN
+			do
 
 				from
-				break:= False
+					break:= False
 				until
 					break=True
 				loop
+
 					check_Solvability
 				if
 					direcltySolvable= True
 				then
-				break:=True
-					divide
+					break:=True
 				end
+				divide
 			end
 		end
 	end

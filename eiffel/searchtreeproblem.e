@@ -18,7 +18,7 @@ create
 	make
 
 feature-- Constructor
-	make 
+	make
 		do
 			create solution.make
 		end
@@ -26,7 +26,7 @@ feature-- Constructor
 
 feature--variable
 	solution:  SEARCHTREESOLUTION
-	find:INTEGER
+	find:INTEGER_32
 	b:detachable BINARYTREE
 	root:detachable NODE
 
@@ -42,20 +42,18 @@ feature --check_Solvability
 	check_Solvability
 		do
 
-	if not attached root as rootSafe then
+			if not attached root as rootSafe then
 
-				direcltysolvable.set_item (True)
+				direcltysolvable:=True
 				solution.set_has (False)
-		end
-	if attached root as rootSafe then
-			if
-			rootSafe.getvalue= find
-			then
-			direcltySolvable.set_item (TRUE)
-		 	solution.set_has(True)
+			end
+			if attached root as rootSafe then
+				if rootSafe.getvalue= find then
+					direcltySolvable:=True
+		 			solution.set_has(True)
 
+			end
 		end
-	end
 end
 
 feature --redefine divide
@@ -74,13 +72,13 @@ feature --redefine divide
 
 
 feature -- set_tree
-	set_tree (numbers:  ARRAYED_LIST[INTEGER])
+	set_tree (numbers:  ARRAY[INTEGER])
 
 		local
 			i:INTEGER
 		do
-			create b.make (numbers.first)
-			find:=numbers.last
+			create b.make (numbers[1])
+			find:=numbers[numbers.count]
 
 			if attached b as bSafe then
 
@@ -88,10 +86,11 @@ feature -- set_tree
 				i:=2
 
 			until
-				i < numbers.count
+				i >= numbers.count
 			loop
 
-				bSafe.insert (numbers.array_at (i))
+				bSafe.insert (numbers[i])
+				i:=i+1
 			end
 
 				root:= bSafe.getroot
