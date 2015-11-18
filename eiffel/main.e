@@ -20,8 +20,9 @@ feature {NONE}
 
 		do
 
-			TreeGPS
 			FacultyGPS
+			TreeGPS
+
 
 --			create b.make (50)
 --			b.insert (40)
@@ -80,25 +81,49 @@ feature {NONE}
 		TreeGPS
 		local
 			i: INTEGER
+			root: STRING
+			node: STRING
+			validNumber: BOOLEAN
 		do
 			create a.make_empty
+			io.new_line
+			io.new_line
 			print("***CREATE NEW BINARYTREE***")
 			io.new_line
 			print("ENTER ROOT: ")
-			io.read_integer
-			a.force (io.last_integer, 1) --root
-			print("ENTER NODES (to finish enter 'X'): ")
+
 			from
-	        	io.read_line
+				validNumber:=false
+			until
+				validNumber=true
+			loop
+				io.read_line
+				root:=io.last_string
+				if root.is_integer then
+					a.force (root.to_integer, 1) -- set root
+					validNumber:=true
+				else
+					print("no vaild input! Enter number: ")
+				end
+			end
+
+			print("ENTER NODES (to finish enter any letter)")
+			io.new_line
+			print("Enter first Node: ")
+			from
 	        	i:=2
+	        	node:="0"
 	     	until
-	     		--io.last_string.as_upper = 'X'
-	     		i>=5
+	     		not node.is_integer
 	    	loop
 	       		io.read_line
-	       		a.force (io.last_string.to_integer, i)
-	       		i:=i+1
-	     	end -- user has typed the character 'x' or 'X'
+	        	node:=io.last_string
+	       		if node.is_integer then
+	       			print("Enter next Node: " )
+	       			a.force (io.last_string.to_integer, i)
+	       			i:=i+1
+	       		end
+	     	end
 
 			print("ENTER SEARCH ELEMENT: ")
 			io.read_integer
@@ -117,19 +142,39 @@ feature {NONE}
 		feature --Faculty General Problem Solver
 			FacultyGPS
 			local
+				s: STRING
 				n: INTEGER
+				validNumber: BOOLEAN
+
 			do
 				create facultyProb.make
 				io.new_line
 				io.new_line
 				print("ENTER NUMBER FOR FACULTY: ")
-				io.read_integer
-				n:=io.last_integer
+
+
+
+				from
+					validNumber:=false
+				until
+					validNumber=true
+				loop
+					io.read_line
+			   		s:=io.last_string
+					if s.is_integer then
+						n:=s.to_integer
+						validNumber:=true
+					else
+						print("no vaild input! Enter number: ")
+					end
+				end
+
 				facultyProb.set_n(n)
 				print("The result of faculty ")
 				print (n)
 				print(" is: ")
 				print (facultyProb.get_sol.out)
+
 			end
 
 
