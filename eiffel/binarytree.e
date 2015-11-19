@@ -17,11 +17,18 @@ feature --Constructor
 	make (localvalue: INTEGER_32)
 		do
 			create root.make (localvalue, Void)
+
+			ensure
+				current.getroot/=void
+				current.has (localValue)
 		end
+
 
 feature --insert
 
 	insert (localvalue: INTEGER_32)
+		require
+			NOT has(localvalue)
 		local
 			currentnode: detachable NODE
 			prevnode: detachable NODE
@@ -62,6 +69,8 @@ feature --insert
 					end --end issmaller-if
 				end--end find-if
 			end--end root-if
+			ensure
+				current.has (localvalue)
 		end--end do
 
 feature --find
@@ -94,6 +103,8 @@ feature --has
 
 feature --remove
 	remove(localValue: INTEGER): BOOLEAN
+		require
+			current.has (localvalue)
 		local
 			deleteNode: detachable NODE
 
@@ -150,7 +161,8 @@ feature --remove
 				end--end if-elseif-sequence
 			end--end deletnodesafe attached-if
 
-
+		ensure
+			NOT current.has (localvalue)
 		end				--end do
 
 
