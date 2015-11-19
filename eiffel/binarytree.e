@@ -14,46 +14,55 @@ create
 
 feature --Constructor
 --commentar
-	make (value: INTEGER_32)
+	make (localvalue: INTEGER_32)
 		do
-			create root.make (value, Void)
+			create root.make (localvalue, Void)
 		end
 
 feature --insert
 
-	insert (value: INTEGER_32)
+	insert (localvalue: INTEGER_32)
 		local
 			currentnode: detachable NODE
 			prevnode: detachable NODE
 			issmaller: BOOLEAN
 		do
-			prevnode := Current.root
-			from
-				currentnode := prevnode
-			until
-				currentnode = Void
-			loop
-				if (value < currentnode.getvalue) then
-					prevnode := currentnode
-					currentnode := currentnode.getleftnode
-					issmaller := True
-				elseif (value > currentnode.getvalue) then
-					prevnode := currentnode
-					currentnode := currentnode.getrightnode
-					issmaller := False
-				end
-			end
-			if (issmaller) then
-				if attached prevnode as prevnodesafe then
-					prevnodesafe.setleftnode (value)
-				end
-
+			if root=VOID then
+				create currentNode.make (localvalue, void)
+				current.setroot (currentNode)
 			else
-				if attached prevnode as prevnodesafe then
-					prevnodesafe.setrightnode (value)
+				if NOT has(localvalue) then
+					prevnode := Current.root
+					from
+						currentnode := prevnode
+					until
+						currentnode = Void
+					loop
+						if (localvalue < currentnode.getvalue) then
+							prevnode := currentnode
+							currentnode := currentnode.getleftnode
+							issmaller := True
+						elseif (localvalue > currentnode.getvalue) then
+							prevnode := currentnode
+							currentnode := currentnode.getrightnode
+							issmaller := False
+						end
 					end
-			end
-		end
+
+
+					if (issmaller) then
+						if attached prevnode as prevnodesafe then
+							prevnodesafe.setleftnode (localvalue)
+						end
+
+					else
+						if attached prevnode as prevnodesafe then
+							prevnodesafe.setrightnode (localvalue)
+							end
+					end --end issmaller-if
+				end--end find-if
+			end--end root-if
+		end--end do
 
 feature --find
 
@@ -87,346 +96,406 @@ feature --remove
 	remove(localValue: INTEGER): BOOLEAN
 		local
 			deleteNode: detachable NODE
-			tempParent: detachable NODE
-			tempLeft: detachable NODE
-			tempRight: detachable NODE
-			tempNodeL: detachable NODE --temporary left node for deleting the root
-			tempNodeR: detachable NODE --temporary right node for deleting the root
-			bool: BOOLEAN
 
 		do
-			deleteNode:=current.find (localvalue)		--search for the node wich has to be deleted
-			if attached deleteNode as deleteNodeSafe then	--ensure that there is the node wich hast to be delete
-			--space for removing the Root
+			deletenode:=find(localvalue)
 
-				if deletenode=root then
+			if attached deletenode as deleteNodeSafe then
+				if(deleteNodeSafe.getleftNode=VOID AND deleteNodeSafe.getRightNode=void) then
+					if(deleteNodeSafe=root) then
+						if current.removeRootwithoutChild(deleteNode) then
+							Result:=true
+						end--end remove-if
+					else
+						if current.removeNodeWithoutChild(deleteNode) then
+							Result:=true
+						end
+					end--end root-if
 
-					if deleteNodeSafe.getLeftNode=Void AND deleteNode.getRightNode=Void then			--both left and right node are void
-						Current.setRoot(void)
+				elseif(deleteNodeSafe.getleftNode/=VOID AND deleteNodeSafe.getRightNode=void)then
+					if(deleteNodeSafe=root) then
+						if current.removeRootwithLeftChild(deleteNode)then
+							Result:=true
+						end
+					else
+						if current.removeNodeWithLeftChild(deleteNode) then
+							Result:=true
+						end
+					end
+
+				elseif(deleteNodeSafe.getleftNode=VOID AND deleteNodeSafe.getRightNode/=void)then
+					if(deleteNodeSafe=root) then
+						if current.removeRootwithRightChild(deleteNode) then
+							Result:=true
+						end
+					else
+						if current.removeNodeWithRightChild(deleteNode) then
+							Result:=true
+						end
+					end
+
+				elseif(deleteNodeSafe.getleftNode/=VOID AND deleteNodeSafe.getRightNode/=void)then
+					if(deleteNodeSafe=root) then
+
+						if current.removeRootwithTwoChild(deleteNode) then
+							Result:=true
+						end
+					else
+
+						if current.removeNodeWithTwoChild(deleteNode) then
+							Result:=true
+						end
+					end
+
+				end--end if-elseif-sequence
+			end--end deletnodesafe attached-if
+
+
+		end				--end do
+
+
+
+feature --specific remove methods
+	removeRootwithoutChild(deleteNode: detachable NODE):BOOLEAN
+		do
+			current.setroot (VOID)
+			Result:=true
+		end --end rootwithoutchild
+
+	removeNodeWithoutChild(localDeleteNode: detachable NODE): BOOLEAN
+		do
+			if attached localdeletenode as localdeletenodeSafe then
+				if attached localdeletenodeSafe.getParent as parentSafe then
+					if localdeletenodeSafe.getValue<parentSafe.getValue then
+						parentSafe.setNewLeftNode(void)
 						Result:=true
+					elseif localdeletenodeSafe.getValue>parentSafe.getValue then
+						parentSafe.setNewRightNode(void)
+						Result:=true
+					end
+				end --end parentSafe attached-if
+			end--end localdeletesafe attached-if
+		end--end NodewithoutChild
 
-
-					elseif deletenodesafe.getleftnode/=void AND deleteNodeSafe.getrightnode=void then	--deleting a root with a left child
-						if attached deleteNode.getLeftNode as delLeftSafe then	--ensure that the left child of the node which has to be deleted isn't void
-							from											--searching for the biggest value in the left part-tree of the deleted node
-								tempLeft:=deleteNode.getLeftNode					--set the left child of the node which has to be deleted locally						
-							until
-								bool=true
-							loop
-								if attached tempLeft as tempLeftSafe then		--ensure that the actual templeft isn't void
-									if(tempLeftSafe.getrightnode/=void) then	-- only if the next right child of the actual tmpleft isn't void it gets set; otherwise->endless-loop
-										templeft:=tempLeftSafe.getRightNode
-									end
-								end
-								if attached tempLeft as tempLeftSafe then	--ensure void-safety
-									if tempLeftSafe.getRightNode=void then	--there is no bigger value in this part tree->actual templeft is the node with the biggest value
-										bool:=true
-									end
-								end
-							end --end loop
-
-							if attached tempLeft as tempLeftSafe then	--ensure void-safety
-
-								if attached tempLeftSafe.getparent as tempLeftParent then	--ensure void-safety
-									if  attached tempLeftSafe.getleftnode as tempLeftLeft then	--ensure void-safety
-										tempLeftParent.setNewRightNode(tempLeftLeft)	--parent of the node which replaces the deleted node gets new right child
-										tempLeftLeft.setparent (templeftSafe.getparent)			--child of the node whitch replaces the delete node gets new parent	
-									else
-										tempLeftParent.setNewRightNode(void)	--parent of the node which replaces the deleted node has no more child
-									end --end tempLeftLeft
-								end --end templeftparent attahced-if
-								if attached current.getroot as rootSafe then	--setting the new Root and the child of the old root to the new one
-									tempNodeL:=rootSafe.getleftnode
-									current.setroot (tempLeftSafe)	--setting new root
-									if attached current.getroot as newRootSafe then	--new root new if
-										if attached tempnodeL as tempnodeLSafe then
-											tempnodeLSafe.setparent (newRootSafe)
-											newRootSafe.setNewLeftNode(tempnodeL)
-											Result:=true
-										end --end tempnodesafe attached-if
-									end --end newRootSafe attached-if
-								end --end rootsafe attached-if
-
-
-							end --tempLeftSafe attahced-if
-
-
-						end --delleftsafe if-attached
-					elseif deleteNode.getrightnode/=Void AND deletenode.getleftnode=void then					--left node is void, right node is a child
-						if attached deleteNode.getRightNode as delRightSafe then	--ensure void-safety
-
-							from											--searching for the node with the smallest value in the right part-tree of the deleted node
-								tempRight:=deleteNode.getRightNode
-							until
-								bool=true
-							loop
-								if attached tempRight as tempRightSafe then	--ensure void-safety
-									if(temprightsafe.getleftnode/=void) then --only if the next left node of the actual tempright isn't void it gets set; otherwise->endless-loop
-										tempRight:=tempRightSafe.getLeftNode
-									end
-								end
-								if attached tempRight as tempRightSafe then --ensure void-safety
-									if tempRightSafe.getLeftNode=void then --there is no node with a smaller value in this part tree->the actual tempright node is the one with the smallest value
-										bool:=true
-									end
-
-								end
-							end --end loop
-
-
-							if attached tempRight as tempRightSafe then	--ensure void-safety
-
-								if attached temprightSafe.getparent as tempRightParent then	--ensure void-safety
-									if attached temprightSafe.getrightnode as tempRightRight then	--ensure void-safety
-										tempRightParent.setNewLeftNode(tempRightRight)				--parent of the node which replaces th deleted node gets a new left child
-										tempRightRight.setparent (tempRightSafe.getparent)			--child of the node whitch replaces the delete node gets new parent
-									else
-										tempRightParent.setNewLeftNode(void)						--if the node which replaces th deleted node has no children the parent node gets no new child
-									end --end tempRightRight
-
-									if attached current.getroot as rootSafe then	--setting the new Root and the child of the old root to the new one
-									tempNodeR:=rootSafe.getrightNode
-									current.setroot (tempRightSafe)	--setting new root
-									if attached current.getroot as newRootSafe then	--new root new if to get the actual root
-										if attached tempNodeR as tempnodeRSafe then
-											tempnodeRSafe.setparent (newRootSafe)
-											newRootSafe.setNewRightNode(tempnodeR)
-											Result:=true
-										end --end tempnodesafe attached-if
-									end --end newRootSafe attached-if
-								end --end rootsafe attached-if
-								end --end tempRightParent
-							end --end tempRightSafe
-
-						end --end delRightSafe attached-if
-
-					elseif deletenode.getleftnode/=void AND deletenode.getrightnode/=void then
-						if attached deleteNode.getLeftNode as delLeftSafe then	--ensure that the left child of the node which has to be deleted isn't void
-							from											--searching for the biggest value in the left part-tree of the deleted node
-								tempLeft:=deleteNode.getLeftNode					--set the left child of the node which has to be deleted locally						
-							until
-								bool=true
-							loop
-								if attached tempLeft as tempLeftSafe then		--ensure that the actual templeft isn't void
-									if(tempLeftSafe.getrightnode/=void) then	-- only if the next right child of the actual tmpleft isn't void it gets set; otherwise->endless-loop
-										templeft:=tempLeftSafe.getRightNode
-									end
-								end
-								if attached tempLeft as tempLeftSafe then	--ensure void-safety
-									if tempLeftSafe.getRightNode=void then	--there is no bigger value in this part tree->actual templeft is the node with the biggest value
-										bool:=true
-									end
-								end
-							end --end loop
-
-							if attached tempLeft as tempLeftSafe then	--ensure void-safety
-
-								if attached tempLeftSafe.getparent as tempLeftParent then	--ensure void-safety
-									if  attached tempLeftSafe.getleftnode as tempLeftLeft then	--ensure void-safety
-										tempLeftParent.setNewRightNode(tempLeftLeft)	--parent of the node which replaces the deleted node gets new right child
-										tempLeftLeft.setparent (templeftSafe.getparent)			--child of the node whitch replaces the delete node gets new parent	
-									else
-										tempLeftParent.setNewRightNode(void)	--parent of the node which replaces the deleted node has no more child
-									end --end tempLeftLeft
-								end --end templeftparent attahced-if
-								if attached current.getroot as rootSafe then	--setting the new Root and the child of the old root to the new one
-									tempNodeL:=rootSafe.getleftnode
-									tempNodeR:=rootSafe.getrightnode
-									if attached rootsafe.getrightnode as tempnodeRSafe then
-									print(tempnodeRSafe.getvalue)
-									end
-									current.setroot (tempLeftSafe)	--setting new root
-									if attached current.getroot as newRootSafe then	--new root new if
-										if attached tempnodeL as tempnodeLSafe then
-											if attached tempnodeR as tempnodeRSafe then
-
-												tempnodeRSafe.setparent(newRootSafe)
-												newRootSafe.setnewRightNode(tempnodeRSafe)
-												Result:=true
-											end
-											tempnodeLSafe.setparent (newRootSafe)
-											newRootSafe.setNewLeftNode(tempnodeL)
-
-
-										end --end tempnodesafe attached-if
-									end --end newRootSafe attached-if
-								end --end rootsafe attached-if
-
-
-							end --tempLeftSafe attahced-if
-
-
-						end --delleftsafe if-attached
-					end --end if-/elseif-structure
+	removeRootwithLeftChild(localDeleteNode: detachable NODE): BOOLEAN
+		local
+			replacingNode: detachable NODE
+		do
+			replacingnode:=current.getbiggestofleftparttree (localdeletenode)
+			if attached localdeletenode as localdeletenodeSafe then
+				if(replacingnode=localdeletenodeSafe.getLeftNode) then
+					current.setroot (replacingnode)
+					Result:=true
 				else
-
-
-
-					if attached deleteNode.getparent as parentSafe  then	--ensure the deleting node has a parent
-						if deleteNodeSafe.getLeftNode=Void AND deleteNode.getRightNode=Void then			--both left and right node are void
-							if(deleteNode.getValue<parentSafe.getValue) then	--is the node which has to be deleted the left or the right child of the parent?
-								parentSafe.setNewLeftNode(Void)
-								Result:=true
+					if attached replacingnode as replacingNodeSafe then
+						if attached replacingNodeSafe.getParent as parentSafe then
+							if attached replacingNodeSafe.getLeftNode as replacingLeftSafe then
+								parentSafe.setNewRightNode(replacingLeftSafe)
+								replacingLeftSafe.setParent(parentSafe)
 							else
-								parentSafe.setNewRightNode(Void)
+								parentSafe.setNewRightNode(void)
+							end--end replacingLeftSafe attached-if
+							if attached localdeletenodeSafe.getLeftNode as localDeleteLeftSafe then
+								current.setroot (replacingNodeSafe)
+								replacingNodeSafe.setNewLeftNode(localDeleteLeftSafe)
 								Result:=true
 							end
 
-						elseif deleteNode.getLeftNode /=Void AND deletenode.getrightnode=void	then			--left node is a child, right node is void
-							if attached deleteNode.getLeftNode as delLeftSafe then	--ensure that the left child of the node which has to be deleted isn't void
-								from											--searching for the biggest value in the left part-tree of the deleted node
-									tempLeft:=deleteNode.getLeftNode					--set the left child of the node which has to be deleted locally						
-								until
-									bool=true
-								loop
-									if attached tempLeft as tempLeftSafe then		--ensure that the actual templeft isn't void
-										if(tempLeftSafe.getrightnode/=void) then	-- only if the next right child of the actual tmpleft isn't void it gets set; otherwise->endless-loop
-											templeft:=tempLeftSafe.getRightNode
-										end
-									end
-									if attached tempLeft as tempLeftSafe then	--ensure void-safety
-										if tempLeftSafe.getRightNode=void then	--there is no bigger value in this part tree->actual templeft is the node with the biggest value
-											bool:=true
-										end
-									end
-
-								end --end loop
-
-								if attached tempLeft as tempLeftSafe then	--ensure void-safety
-									if attached tempLeftSafe.getparent as tempLeftParent then	--ensure void-safety
-										if  attached tempLeftSafe.getleftnode as tempLeftLeft then	--ensure void-safety
-											tempLeftParent.setNewRightNode(tempLeftLeft)	--parent of the node which replaces the deleted node gets new right child
-											tempLeftLeft.setparent (templeftSafe.getparent)			--child of the node whitch replaces the delete node gets new parent	
-										else
-											tempLeftParent.setNewRightNode(void)	--parent of the node which replaces the deleted node has no more child
-										end --end tempLeftLeft
-										templeftSafe.setNewLeftNode(deletenode.getleftnode)				--set the child of the deleted node as the new child of the replacing node with the biggest value under the deleted value
-										delLeftSafe.setparent (templeft)					--replace the parent of the child of the deleted node with the node with the biggest value under the deleted value
+						end--end parentSafe attached-if
+					end--end replacingNodeSafe
+				end--end replacingNOde=leftNodeOfRemovingNode-if
+			end --end localdeleteNodeSafe attached-if
+		end--end do
 
 
-										if(deletenode.getvalue<parentSafe.getvalue) then	--was the deleted node a left or a right child?
-											parentSafe.setNewLeftNode(templeft)				--parent of the deleted node gets a new left child
-											templeftSafe.setparent (deletenode.getparent)	--new child gets a new parent
-										else
-											parentSafe.setNewRightNode(templeft)			--parent of the deleted node gets a new right child
-											templeftSafe.setparent (deletenode.getparent)	--new child gets a new parent
-										end --end if-else-clause right above
-									Result:=true		--successful removement
-
-									end --end tempLeftParent
-								end --end tempLeftSafe attached if
-							end --end delLeftSafe attached-if
-
-
-						elseif deleteNode.getrightnode/=Void AND deletenode.getleftnode=void then					--left node is void, right node is a child
-							if attached deleteNode.getRightNode as delRightSafe then	--ensure void-safety
-
-								from											--searching for the node with the smallest value in the right part-tree of the deleted node
-									tempRight:=deleteNode.getRightNode
-								until
-									bool=true
-								loop
-									if attached tempRight as tempRightSafe then	--ensure void-safety
-										if(temprightsafe.getleftnode/=void) then --only if the next left node of the actual tempright isn't void it gets set; otherwise->endless-loop
-											tempRight:=tempRightSafe.getLeftNode
-										end
-									end
-									if attached tempRight as tempRightSafe then --ensure void-safety
-										if tempRightSafe.getLeftNode=void then --there is no node with a smaller value in this part tree->the actual tempright node is the one with the smallest value
-											bool:=true
-										end
-
-									end
+	removeNodeWithLeftChild(localdeleteNode: detachable NODE): BOOLEAN
+		local
+			replacingNode: detachable NODE
+		do
+			replacingnode:=current.getbiggestofleftparttree (localdeletenode)
+			if attached localdeletenode as localdeletenodeSafe then
+				if(replacingnode=localdeletenodeSafe.getLeftNode) then
+					if attached replacingnode as replacingnodeSafe then
+						if attached localdeletenodeSafe.getParent as deletedParentSafe then
+							if(localdeletenodeSafe.getValue<deletedParentSafe.getValue) then
+								deletedParentSafe.setNewLeftNode(replacingnodeSafe)
+								replacingnodeSafe.setParent(deletedParentSafe)
+							elseif (localdeletenodeSafe.getValue>deletedParentSafe.getValue) then
+								deletedParentSafe.setNewRightNode(replacingnodeSafe)
+								replacingnodeSafe.setParent(deletedParentSafe)
+							end
+							Result:=true
+						end--end ParentSafe attached-if
+					end--end replacingNodeSafe attached-if
+				else
+					if attached replacingnode as replacingNodeSafe then
+						if attached replacingNodeSafe.getParent as replacingParentSafe then
+							if attached replacingNodeSafe.getLeftNode as replacingLeftSafe then
+								replacingParentSafe.setNewRightNode(replacingLeftSafe)
+								replacingLeftSafe.setParent(replacingParentSafe)
+							else
+								replacingParentSafe.setNewRightNode(void)
+							end--end replacingLeftSafe attached-if
+							if attached localdeletenodeSafe.getLeftNode as localDeleteLeftSafe then
+								replacingNodeSafe.setNewLeftNode(localDeleteLeftSafe)
+								localDeleteLeftSafe.setParent(replacingNodeSafe)
+							end--end localDeleteLeftSafe attached-if
+							if attached localdeletenodeSafe.getParent as deletedParentSafe then
+								if(localdeletenodeSafe.getValue<deletedParentSafe.getValue) then
+									deletedParentSafe.setNewLeftNode(replacingnodeSafe)
+									replacingnodeSafe.setParent(deletedParentSafe)
+								elseif (localdeletenodeSafe.getValue>deletedParentSafe.getValue) then
+									deletedParentSafe.setNewRightNode(replacingnodeSafe)
+									replacingnodeSafe.setParent(deletedParentSafe)
 								end
+								Result:=true
+							end--end ParentSafe attached-if
 
 
-								if attached tempRight as tempRightSafe then	--ensure void-safety
+						end--end replacingParentSafe attached-if
+					end--end replacingNodeSafe
+				end--end replacingNOde=leftNodeOfRemovingNode-if
+			end --end localdeleteNodeSafe attached-if
+		end--end do
 
-									if attached temprightSafe.getparent as tempRightParent then	--ensure void-safety
-										if attached temprightSafe.getrightnode as tempRightRight then	--ensure void-safety
-											tempRightParent.setNewLeftNode(tempRightRight)				--parent of the node which replaces th deleted node gets a new left child
-											tempRightRight.setparent (tempRightSafe.getparent)			--child of the node whitch replaces the delete node gets new parent
-										else
-											tempRightParent.setNewLeftNode(void)						--if the node which replaces th deleted node has no children the parent node gets no new child
-										end --end tempRightRight
+	removeRootwithRightChild(localDeleteNode: detachable NODE): BOOLEAN
+		local
+			replacingNode: detachable NODE
+		do
+			replacingnode:=current.getsmallestofrightparttree (localdeletenode)
+			if attached localdeletenode as localdeletenodeSafe then
+				if(replacingnode=localdeletenodeSafe.getRightNode) then
+					current.setroot (replacingnode)
+					Result:=true
+				else
+					if attached replacingnode as replacingNodeSafe then
+						if attached replacingNodeSafe.getParent as replacingParentSafe then
+							if attached replacingNodeSafe.getRightNode as replacingRightSafe then
+								replacingParentSafe.setNewLeftNode(replacingRightSafe)
+								replacingRightSafe.setParent(replacingParentSafe)
+							else
+								replacingParentSafe.setNewLeftNode(void)
+							end--end replacingLeftSafe attached-if
+							if attached localdeletenodeSafe.getRightNode as localDeleteRightSafe then
+								current.setroot (replacingNodeSafe)
+								replacingNodeSafe.setNewRightNode(localDeleteRightSafe)
+								Result:=true
+							end--end localDeleteLeftSafe attached-if
 
-										temprightSafe.setNewRightNode(deletenode.getrightnode)			--node which replaces the deleted noe gets the deleted nodes right child
-										delRightSafe.setparent (tempright)								--right child gets new replaced parent
+						end--end parentSafe attached-if
+					end--end replacingNodeSafe
+				end--end replacingNOde=leftNodeOfRemovingNode-if
+			end--localdeletenodeSafe attached-if
+		end --end do
 
-										if(deletenode.getvalue<parentSafe.getvalue) then			--was the deleted node a left or a right child?
-											parentSafe.setNewLeftNode(tempright)					--parent of the deleted node gets a new left child
-											temprightSafe.setparent (deletenode.getparent)			--new child gets new parent
-										else
-											parentSafe.setNewRightNode(tempright)					--parent of the deleted node gets a new right child
-											temprightSafe.setparent (deletenode.getparent)			--new child gets new parent
+
+	removeNodeWithRightChild(localDeleteNode: detachable NODE): BOOLEAN
+		local
+			replacingNode: detachable NODE
+		do
+			replacingnode:=current.getsmallestofrightparttree (localdeletenode)
+			if attached localdeletenode as localdeletenodeSafe then
+				if(replacingnode=localdeletenodeSafe.getRightNode) then
+					if attached replacingnode as replacingnodeSafe then
+						if attached localdeletenodeSafe.getParent as deletedParentSafe then
+							if(localdeletenodeSafe.getValue<deletedParentSafe.getValue) then
+								deletedParentSafe.setNewLeftNode(replacingnodeSafe)
+								replacingnodeSafe.setParent(deletedParentSafe)
+							elseif (localdeletenodeSafe.getValue>deletedParentSafe.getValue) then
+								deletedParentSafe.setNewRightNode(replacingnodeSafe)
+								replacingnodeSafe.setParent(deletedParentSafe)
+							end
+							Result:=true
+						end--end ParentSafe attached-if
+					end--end replacingNodeSafe attached-if
+				else
+					if attached replacingnode as replacingNodeSafe then
+						if attached replacingNodeSafe.getParent as replacingParentSafe then
+							if attached replacingNodeSafe.getRightNode as replacingRightSafe then
+								replacingParentSafe.setNewLeftNode(replacingRightSafe)
+								replacingRightSafe.setParent(replacingParentSafe)
+							else
+								replacingParentSafe.setNewLeftNode(void)
+							end--end replacingLeftSafe attached-if
+							if attached localdeletenodeSafe.getRightNode as localDeleteRightSafe then
+								replacingNodeSafe.setNewRightNode(localDeleteRightSafe)
+								localDeleteRightSafe.setParent(replacingNodeSafe)
+							end--end localDeleteLeftSafe attached-if
+							if attached localdeletenodeSafe.getParent as deletedParentSafe then
+								if(localdeletenodeSafe.getValue<deletedParentSafe.getValue) then
+									deletedParentSafe.setNewLeftNode(replacingnodeSafe)
+									replacingnodeSafe.setParent(deletedParentSafe)
+								elseif (localdeletenodeSafe.getValue>deletedParentSafe.getValue) then
+									deletedParentSafe.setNewRightNode(replacingnodeSafe)
+									replacingnodeSafe.setParent(deletedParentSafe)
+								end
+								Result:=true
+							end--end ParentSafe attached-if
+
+
+						end--end replacingParentSafe attached-if
+					end--end replacingNodeSafe
+				end--end replacingNOde=leftNodeOfRemovingNode-if
+			end --end localdeleteNodeSafe attached-if
+		end--end do
+
+
+
+	removeRootwithTwoChild(localdeleteNode: detachable NODE): BOOLEAN
+		local
+			replacingNode: detachable NODE
+		do
+			replacingnode:=current.getbiggestofleftparttree (localdeletenode)
+			if attached localdeletenode as localdeletenodeSafe then
+				if(replacingnode=localdeletenodeSafe.getLeftNode) then
+					if attached localdeletenodeSafe.getRightNode as localDeleteRight then
+						if attached replacingnode as replacingNodeSafe then
+							replacingNodeSafe.setNewRightNode(localDeleteRight)
+						end
+
+						current.setroot (replacingnode)
+						Result:=true
+					end
+				else
+					if attached replacingnode as replacingNodeSafe then
+						if attached replacingNodeSafe.getParent as parentSafe then
+							if attached replacingNodeSafe.getLeftNode as replacingLeftSafe then
+								parentSafe.setNewRightNode(replacingLeftSafe)
+								replacingLeftSafe.setParent(parentSafe)
+							else
+								parentSafe.setNewRightNode(void)
+							end--end replacingLeftSafe attached-if
+							if attached localdeletenodeSafe.getLeftNode as localDeleteLeftSafe then
+								if attached localdeletenodeSafe.getRightNode as localDeleteRightSafe then
+									current.setroot (replacingNodeSafe)
+									replacingNodeSafe.setNewLeftNode(localDeleteLeftSafe)
+									localDeleteLeftSafe.setParent(replacingNodeSafe)
+									replacingNodeSafe.setNewRightNode(localDeleteRightSafe)
+									localDeleteRightSafe.setParent(replacingNodeSafe)
+									Result:=true
+								end--end localDeleteRightSafe attached-if
+							end--end localDeleteLeftSafe attached-if
+
+						end--end parentSafe attached-if
+					end--end replacingNodeSafe
+				end--end replacingNOde=leftNodeOfRemovingNode-if
+			end --end localdeleteNodeSafe attached-if
+		end--end do
+
+
+	removeNodeWithTwoChild(localDeleteNode: detachable NODE): BOOLEAN
+		local
+			replacingNode: detachable NODE
+		do
+			replacingnode:=current.getbiggestofleftparttree (localdeletenode)
+
+			if attached localdeletenode as localdeletenodeSafe then
+				if(replacingnode=localdeletenodeSafe.getLeftNode) then
+
+					if attached localdeletenodeSafe.getRightNode as localDeleteRight then
+						if attached localdeletenodeSafe.getParent as localDeleteParent then
+							if attached replacingnode as replacingnodeSafe then
+								if(localdeletenodeSafe.getValue<localDeleteParent.getValue)then
+									replacingnodeSafe.setParent(localDeleteParent)
+									localDeleteParent.setNewLeftNode(replacingnodeSafe)
+
+								else
+									replacingnodeSafe.setParent(localDeleteParent)
+									localDeleteParent.setNewRightNode(replacingnodeSafe)
+								end
+								replacingnodeSafe.setNewRightNode(localDeleteRight)
+								Result:=true
+							end--end replacingnodeSafe attached-if
+						end--end localDeleteParent attached-if
+
+					end--end localDeleteRightattached-if
+				else
+					if attached replacingnode as replacingNodeSafe then
+						if attached replacingNodeSafe.getParent as parentSafe then
+							if attached replacingNodeSafe.getLeftNode as replacingLeftSafe then
+								parentSafe.setNewRightNode(replacingLeftSafe)
+								replacingLeftSafe.setParent(parentSafe)
+							else
+								parentSafe.setNewRightNode(void)
+							end--end replacingLeftSafe attached-if
+							if attached localdeletenodeSafe.getLeftNode as localDeleteLeftSafe then
+								if attached localdeletenodeSafe.getRightNode as localDeleteRightSafe then
+									if attached localdeletenodeSafe.getParent as deletedParentSafe then
+										if(localdeletenodeSafe.getValue<deletedParentSafe.getValue) then
+											deletedParentSafe.setNewLeftNode(replacingnodeSafe)
+											replacingnodeSafe.setParent(deletedParentSafe)
+										elseif (localdeletenodeSafe.getValue>deletedParentSafe.getValue) then
+											deletedParentSafe.setNewRightNode(replacingnodeSafe)
+											replacingnodeSafe.setParent(deletedParentSafe)
 										end
-										Result:=true			--successful removement
-									end --end tempRightParent
-								end --end tempRightSafe
+										replacingNodeSafe.setNewRightNode(localDeleteRightSafe)
+										localDeleteRightSafe.setParent(replacingNodeSafe)
+										replacingNodeSafe.setNewLeftNode(localDeleteLeftSafe)
+										localDeleteLeftSafe.setParent(replacingNodeSafe)
+										Result:=true
+									end--end ParentSafe attached-if
+								end--end localDeleteRightSafe attached-if
+							end--end localDeleteLeftSafe attached-if
 
-							end --end delRightSafe attached-if
+						end--end parentSafe attached-if
+					end--end replacingNodeSafe
+				end--end replacingNOde=leftNodeOfRemovingNode-if
+			end --end localdeleteNodeSafe attached-if
+		end--end do
 
-						elseif deletenode.getleftnode/=void AND deletenode.getrightnode/=void then		--deleted node has both left and right child
-							if attached deleteNode.getRightNode as delRightSafe then		--ensure void-safety
-								if attached deleteNode.getLeftNode as delLeftSafe then		--ensure void-safety
+feature --helping features for delete
+	getBiggestOfLeftPartTree(actRoot: detachable NODE): detachable NODE
+		local
+			tempBiggest: detachable NODE
+			bool: BOOLEAN
+		do
+			if attached actroot as actrootSafe then
 
+				from											--searching for the biggest value in the left part-tree of the deleted node
+					tempBiggest:=actrootSafe.getLeftNode					--set the left child of the node which has to be deleted locally						
+				until
+					bool=true
+				loop
+					if attached tempBiggest as tempBiggestSafe then		--ensure that the actual templeft isn't void
+						if(tempBiggestSafe.getrightnode/=void) then	-- only if the next right child of the actual tmpleft isn't void it gets set; otherwise->endless-loop
+							tempBiggest:=tempBiggestSafe.getRightNode
+						end
+					end
+					if attached tempBiggest as tempBiggestSafe then	--ensure void-safety
+						if tempBiggestSafe.getRightNode=void then	--there is no bigger value in this part tree->actual templeft is the node with the biggest value
+							bool:=true
+						end
+					end
+				end --end loop
+			end
+			Result:=tempBiggest
+		end--end do
 
-									from												--searching for the smallest value in the right part-tree of the deleted node
-										tempRight:=deleteNode.getRightNode
-									until
-										bool=true
-									loop
-										if attached tempRight as tempRightSafe then		--ensure void-safety
-											if(temprightsafe.getleftnode/=void) then	--only if the next left node of tempRight isn't void it will get the next tempRight; otherwise->endless-loop
-											tempRight:=tempRightSafe.getLeftNode
-											end
-										end-- end temprightsafe attached-if
-										if attached tempRight as tempRightSafe then		--ensure void-safety
-											if tempRightSafe.getLeftNode=void then		--if the next left node is void, you found the smallest node which menas no more loops
-												bool:=true
-											end
-										end--end temprightsafe attached-if
-									end
-
-									if attached tempright as tempRightSafe then			--ensure void-safety
-										if attached temprightSafe.getparent as tempRightParent then	--ensure void-safety
-											if attached temprightSafe.getrightnode as tempRightRight then	--ensure void-safety/has the replacing node got a right child?(no left child possible, it's already the smallest)
-												tempRightParent.setNewLeftNode(tempRightRight)				--parent of the replacing node gets the child of the replacing node as a new left child
-												tempRightRight.setparent (tempRightSafe.getparent)
-											else
-												tempRightParent.setNewLeftNode(void)						--replacing child hadn't had a right child, so the parents left child is void
-											end --end tempRightRight
-
-											temprightSafe.setNewRightNode(deletenode.getrightnode)			--replacing node gets new right child
-											delRightSafe.setparent (tempright)								--former right child of the deleted node gets a new parent
-											tempRightSafe.setNewLeftNode(deletenode.getleftnode)			--replacing node gets new left child
-											delLeftSafe.setparent(tempright)								--former left child of the deleted node gets a new parent
-
-
-											if(deletenode.getvalue<parentSafe.getvalue) then				--was the deleted node a left or a right child?
-												parentSafe.setNewLeftNode(tempright)						--value was smaller so the replacing node is now the left child of the parent node
-												temprightSafe.setparent (deletenode.getparent)				--the other way around the former parent of the deleted node is now the parent of the replacing node
-											else
-												parentSafe.setNewRightNode(tempright)						--same as 2 rows above, only as a right child
-												temprightSafe.setparent (deletenode.getparent)				--same as 3 rows above
-											end
-											Result:=true					--removement was successful
-										end --end tempRightParent
-									end --end tempRightSafe
-								end--end delLeftSafe attached-if
-
-							end --end delRightSafe attached-if
-
-						end		--end normal if-/elseif-clauses
-
-					end--end root-if
-
-
-
-				end		--end parentSafe attached-if
-			end			--end deleteNode attached-if
-		end				--end do
-
+	getSmallestOfRightPartTree(actRoot: detachable NODE): detachable NODE
+		local
+			tempSmallest: detachable NODE
+			bool: BOOLEAN
+		do
+			if attached actroot as actrootSafe then
+				from											--searching for the node with the smallest value in the right part-tree of the deleted node
+					tempSmallest:=actrootSafe.getRightNode
+				until
+					bool=true
+				loop
+					if attached tempSmallest as tempSmallestSafe then	--ensure void-safety
+						if(tempSmallestsafe.getleftnode/=void) then --only if the next left node of the actual tempright isn't void it gets set; otherwise->endless-loop
+							tempSmallest:=tempSmallestSafe.getLeftNode
+						end
+					end
+					if attached tempSmallest as tempSmallestSafe then --ensure void-safety
+						if tempSmallestSafe.getLeftNode=void then --there is no node with a smaller value in this part tree->the actual tempright node is the one with the smallest value
+							bool:=true
+						end
+					end
+				end --end loop
+			end
+			Result:=tempSmallest
+		end
 
 feature --test-method
 
