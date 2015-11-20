@@ -23,8 +23,8 @@ feature--Constructor
 		end
 
 feature--variable
-solution: FACULTYSOLUTION
-n, sol:INTEGER_32
+	solution: FACULTYSOLUTION
+	n, sol:INTEGER_32
 
 feature --redefine solition
 
@@ -52,16 +52,16 @@ feature --redefine divide
 
 feature --get_sol
 	get_sol: INTEGER
-	do
-		Result:= sol
-	end
+		do
+			Result:= sol
+		end
 
 
 feature --get_n
 	get_n: INTEGER
-	do
-		Result:=n
-	end
+		do
+			Result:=n
+		end
 
 feature --set_n
 	set_n(i:INTEGER)-- set the value n

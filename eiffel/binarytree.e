@@ -6,8 +6,8 @@ note
 
 class
 	BINARYTREE
---	inherit CONTAINER[INTEGER]
---		redefine is_empty, linear_representation end
+	inherit CONTAINER[INTEGER]
+		redefine is_empty, linear_representation end
 
 create
 	make
@@ -525,10 +525,10 @@ feature --redefine
 			Result:= Root=Void	--no root no tree
 		end
 
---	linear_representation: LINEAR [INTEGER]
---			do
---				Result:= linear_representation
---			end
+	linear_representation: LINEAR [INTEGER]
+		do
+			Result:= linear_representation
+		end
 
 
 

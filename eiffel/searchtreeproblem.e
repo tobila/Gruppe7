@@ -32,7 +32,6 @@ feature--variable
 
 
 feature --redefine solition
-
 	solition: SEARCHTREESOLUTION -- return solution
 		do
 			Result:= solution
@@ -41,7 +40,6 @@ feature --redefine solition
 feature --check_Solvability
 	check_Solvability --compares the value with the search value
 		do
-
 			if not attached root as rootSafe then
 
 				direcltysolvable:=True
@@ -51,22 +49,21 @@ feature --check_Solvability
 				if rootSafe.getvalue= find then
 					direcltySolvable:=True
 		 			solution.set_has(True)
-
+				end
 			end
 		end
-	end
 
 feature --redefine divide
 	divide -- goes one step down the tree
 	do
 		if attached root as rootSafe then
 			if rootSafe.getvalue > find then
-					root:=rootSafe.getleftnode
-				else
-					root:= rootSafe.getrightnode
-				end
-			 end
+				root:=rootSafe.getleftnode
+			else
+				root:= rootSafe.getrightnode
+			end
 		end
+	end
 
 
 feature -- set_tree
@@ -80,16 +77,16 @@ feature -- set_tree
 
 			if attached b as bSafe then
 
-			from
-				i:=2
+				from
+					i:=2
 
-			until
-				i >= numbers.count
-			loop
+				until
+					i >= numbers.count
+				loop
 
-				bSafe.insert (numbers[i])
-				i:=i+1
-			end
+					bSafe.insert (numbers[i])
+					i:=i+1
+				end
 
 				root:= bSafe.getroot
 				direcltysolvable.set_item (FALSE)
@@ -108,4 +105,3 @@ feature -- get_find returns the value find
 		end
 
 end
-

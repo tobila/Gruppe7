@@ -10,20 +10,20 @@ create
 	make
 
 feature --default constructor
-make
-
-	do
-
-	end
+	make
+		do
+		end
 
 feature -- set_has to set the value has
 	set_has(h:BOOLEAN )
-	do has:=h end
+		do
+			has:=h
+		end
 
 	searchtree_Solution
-	do
+		do
+		end
 
-	end
 feature --get_has returns the value has
 	get_has: BOOLEAN
 		do

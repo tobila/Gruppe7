@@ -6,26 +6,23 @@ note
 
 class
 	FACULTYSOLUTION
+
 create
-make
+	make
 
 feature-- dafault Constructor		
-
-make
-do
-
-end
+	make
+		do
+		end
 
 feature--set the value faculty
-set_faculty(fac:INTEGER)
-do
-	faculty:=fac
-end
-
-
+	set_faculty(fac:INTEGER)
+		do
+			faculty:=fac
+		end
 
 
 feature--var
-faculty: INTEGER
+	faculty: INTEGER
 
 end
