@@ -21,13 +21,13 @@ feature --check_Solvability, divide ,compute_Solution
 	do
 	end
 
-	set_direcltySolvable(b:BOOLEAN)
+	set_direcltySolvable(b:BOOLEAN)-- returns the value directlySolvable
 	do
 		direcltySolvable:=b
 	end
 
 
-	compute_Solution
+	compute_Solution -- breaks when directlySolvable is true -> Solution is found, is solution not jet found method check_solvability and divide is called
 		local break:BOOLEAN
 			do
 

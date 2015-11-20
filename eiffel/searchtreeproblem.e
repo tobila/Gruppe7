@@ -33,13 +33,13 @@ feature--variable
 
 feature --redefine solition
 
-	solition: SEARCHTREESOLUTION
+	solition: SEARCHTREESOLUTION -- return solution
 		do
 			Result:= solution
 		end
 
 feature --check_Solvability
-	check_Solvability
+	check_Solvability --compares the value with the search value
 		do
 
 			if not attached root as rootSafe then
@@ -54,25 +54,23 @@ feature --check_Solvability
 
 			end
 		end
-end
+	end
 
 feature --redefine divide
-	divide
+	divide -- goes one step down the tree
 	do
-	if attached root as rootSafe then
-		if
-			rootSafe.getvalue > find
-		then
-			root:=rootSafe.getleftnode
-		else
-			root:= rootSafe.getrightnode
+		if attached root as rootSafe then
+			if rootSafe.getvalue > find then
+					root:=rootSafe.getleftnode
+				else
+					root:= rootSafe.getrightnode
+				end
+			 end
 		end
-	 end
-	end
 
 
 feature -- set_tree
-	set_tree (numbers:  ARRAY[INTEGER])
+	set_tree (numbers:  ARRAY[INTEGER]) --creates the Binarytree first index is the root last index is the search value
 
 		local
 			i:INTEGER
@@ -102,7 +100,7 @@ feature -- set_tree
 
 
 
-feature -- get_find
+feature -- get_find returns the value find
 
 	get_find:INTEGER
 		do

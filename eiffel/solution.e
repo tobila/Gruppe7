@@ -9,7 +9,7 @@ deferred class
 
 feature --Access
 
-	solition:S
+	solition:S --method retrurns value S
 	deferred
 	end
 

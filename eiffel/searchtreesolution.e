@@ -16,7 +16,7 @@ make
 
 	end
 
-feature -- set_has
+feature -- set_has to set the value has
 	set_has(h:BOOLEAN )
 	do has:=h end
 
@@ -24,7 +24,7 @@ feature -- set_has
 	do
 
 	end
-feature --get_has
+feature --get_has returns the value has
 	get_has: BOOLEAN
 		do
 			Result:=has;

@@ -28,7 +28,7 @@ n, sol:INTEGER_32
 
 feature --redefine solition
 
-	solition: FACULTYSOLUTION
+	solition: FACULTYSOLUTION -- return the solution
 		do
 			Result:= solution
 		end
@@ -36,17 +36,16 @@ feature --redefine solition
 
 feature --check_Solvability
 
-	check_Solvability
+	check_Solvability --
 	do
-		if n=0 OR n=1 then
+		if n=0 OR n=1 then	-- when the value is 0 or 1 the solution is found
 			direcltysolvable:=True
 			solution.set_faculty (1)
 		end
 	end
 feature --redefine divide
-	divide
+	divide --create the solution
 		do
-			io.new_line
 			sol:=n*sol
 			n:=n-1
 		end
@@ -65,7 +64,7 @@ feature --get_n
 	end
 
 feature --set_n
-	set_n(i:INTEGER)
+	set_n(i:INTEGER)-- set the value n
 		do
 			n:=i-1
 			sol:=i

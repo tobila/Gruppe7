@@ -16,7 +16,7 @@ do
 
 end
 
-feature--set
+feature--set the value faculty
 set_faculty(fac:INTEGER)
 do
 	faculty:=fac
