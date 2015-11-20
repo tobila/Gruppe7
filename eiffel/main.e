@@ -37,54 +37,6 @@ feature {NONE}
 			print(	b.remove (60))
 			print(b.has (60))
 
-			if attached b.getroot as x then
-			--	print(x.getvalue)
-				if attached x.getrightnode as x1 then
-				--	print(x1.getvalue)
-					if attached x1.getleftnode as x2 then
-					--	print(x2.getvalue)
-						if attached x1.getrightnode as x3 then
-						--	print(x3.getvalue)
-							if attached x3.getparent as xp then
-								print(xp.getvalue)
-								if attached x2.getrightnode as x4 then
-								--	print(x4.getvalue)
-									if attached x4.getrightnode as x5 then
-										--print(x5.getvalue)
-									end
-								end
-							end
-						end
-					end
-				end
-			end
---			b.insert (60)
---			b.insert (55)
---			b.insert (53)
---			b.insert (54)
---			b.insert (49)
---			b.insert (52)
-
---			print("Ist vorhanden: ")
-
---			print(b.has (50))
---			print("%N")
-
-
---			print("Wurde geloescht: ")
---			print(b.remove (50))
---			print("%N")
---			print("Ist vorhanden: ")
---			print(b.has (50))
---			if attached b.getroot as x then
---				if attached x.getrightnode as x2 then
---					if attached x2.getleftnode as x3 then
---						if attached x3.getleftnode as x4 then
---							print(x4.value)
---						end
---					end
---				end
---			end
 
 
 	end
@@ -108,14 +60,14 @@ feature --Tree General Problem Solver
 		print("ENTER ROOT: ")
 
 		from
-			validNumber:=false
+			validNumber:=false	-- loop while last_string is no valid number
 		until
 			validNumber=true
 		loop
-			io.read_line
+			io.read_line	-- read user input as string
 			root:=io.last_string
 			if root.is_integer then
-				a.force (root.to_integer, 1) -- set root
+				a.force (root.to_integer, 1) -- set root if valid number
 				validNumber:=true
 			else
 				print("no vaild input! Enter number: ")
@@ -123,9 +75,9 @@ feature --Tree General Problem Solver
 		end
 
 		print("ENTER NODES (to finish enter any letter)")
-		io.new_line
+		io.new_line		-- read user input as string
 		print("Enter first Node: ")
-		from
+		from	-- loop while user enter any letter
         	i:=2
         	node:="0"
      	until
@@ -135,22 +87,22 @@ feature --Tree General Problem Solver
         	node:=io.last_string
        		if node.is_integer then
        			print("Enter next Node: " )
-       			a.force (io.last_string.to_integer, i)
+       			a.force (io.last_string.to_integer, i) -- set nodes
        			i:=i+1
        		end
      	end
 
 		print("ENTER SEARCH ELEMENT: ")
 		io.read_integer
-		a.force (io.last_integer, i)
+		a.force (io.last_integer, i)	-- set searchelement
 		create treeProb.make
 
-		treeProb.set_tree (a)
+		treeProb.set_tree (a)	-- set tree to problemsolution
 		print("FIND: ")
 		print(treeProb.find)
 		io.new_line
 		print("TREE CONTAINS FIND? ")
-		print(treeProb.solition.get_has)
+		print(treeProb.solition.get_has)	-- print solution
 		io.new_line
 	end
 
@@ -171,7 +123,7 @@ feature --Faculty General Problem Solver
 
 
 
-		from
+		from	-- loop while input is a valid number
 			validNumber:=false
 		until
 			validNumber=true
@@ -179,18 +131,18 @@ feature --Faculty General Problem Solver
 			io.read_line
 	   		s:=io.last_string
 			if s.is_integer then
-				n:=s.to_integer
+				n:=s.to_integer -- set faculty n
 				validNumber:=true
 			else
 				print("no vaild input! Enter number: ")
 			end
 		end
 
-		facultyProb.set_n(n)
+		facultyProb.set_n(n) -- set faculty in problemsolver
 		print("The result of faculty ")
 		print (n)
 		print(" is: ")
-		print (facultyProb.get_sol.out)
+		print (facultyProb.get_sol.out) -- get solution
 
 	end
 

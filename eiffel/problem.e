@@ -35,14 +35,13 @@ feature --check_Solvability, divide ,compute_Solution
 			until
 				break=True
 			loop
-
 				check_Solvability
-			if
-				direcltySolvable= True
-			then
-				break:=True
+				if
+					direcltySolvable= True
+				then
+					break:=True
+				end
+				divide
 			end
-			divide
 		end
-	end
 end
