@@ -7,7 +7,7 @@ Created on 05.11.2015
 
 # last in first out 
 
-class OwnBuffer(object):
+class OwnBuffer():
     '''
     classdocs
     '''
@@ -18,58 +18,52 @@ class OwnBuffer(object):
         self.bufferList=list();
 
     
-    def __push__(self, value) :
-        if len(self.bufferList) > self.capacity:
-            return
-        self.bufferList.append(value)
+    def push(self, value) :
+        if len(self.bufferList) < self.capacity:
+            self.bufferList.append(value)
     
-    def __peek__(self):
-        s= len(self.bufferList)
-        val= self.bufferList[s-1]
-        self.bufferList.pop()
-        return val
+    def peek(self):
+        value = self.bufferList[0]
+        self.bufferList.remove(value)
+        return value
         
         
-    def __isEmpty__(self):
+    def isEmpty(self):
         if len(self.bufferList)==0:
             return True    
         else:
             return False
         
-    def __isFull__(self):
+    def isFull(self):
         if len(self.bufferList) >= self.capacity:  
             return True
         else: 
             return False  
         
-    def __getBuffer__(self):
+    def getBuffer(self):
         return self.bufferList    
         
 if __name__ == '__main__':
     t=OwnBuffer(10)
-    #print len(t.__getBuffer__)
     
-    #print t.__isEmpty__()
-    t.__push__(1)
-    t.__push__(2)
-    t.__push__(3)
-    t.__push__(4)
-    print (t.__getBuffer__())
-    t.__push__(5)
-    t.__push__(6)
-    t.__push__(7)
-    t.__push__(8)
-    t.__push__(2)
-    t.__push__(3)
-    t.__push__(4)
-    t.__push__(5)
-    t.__push__(6)
-    t.__push__(7)
-    t.__push__(8)
-    print (t.__getBuffer__())
-    t.__peek__()
-    print (t.__getBuffer__())
 
-    #t.__getBuffer__
-    #print t.__isFull__()
-    #print t.buffer
+    t.push(1)
+    t.push(2)
+    t.push(3)
+    t.push(4)
+    print (t.getBuffer())
+    t.push(5)
+    t.push(6)
+    t.push(7)
+    t.push(8)
+    t.push(2)
+    t.push(3)
+    t.push(4)
+    t.push(5)
+    t.push(6)
+    t.push(7)
+    t.push(8)
+    print (t.getBuffer())
+    t.peek()
+    print (t.getBuffer())
+
