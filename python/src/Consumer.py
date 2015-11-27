@@ -3,6 +3,9 @@ import time
 import random
 
 class Consumer(threading.Thread):
+    '''Consumer inherits threading.Thread
+    Parameter: Buffer, counter 
+    '''
     
     def __init__(self, buffer, count):
         threading.Thread.__init__(self)
@@ -10,8 +13,10 @@ class Consumer(threading.Thread):
         self.count = count
     
     def run(self):
+        '''get a number from the buffer
+        prints the Consumer count and the consumed number, sleeps a random time
+        '''
         while(True):
-            num = self.buffer.get()
+            num = self.buffer.peek()
             print ("Consumer",self.count,"consumed", num)
-            self.buffer.task_done()
             time.sleep(random.random())

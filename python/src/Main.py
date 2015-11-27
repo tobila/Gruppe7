@@ -1,12 +1,12 @@
 import sys
-import queue
 from Consumer import Consumer
 from Producer import Producer
+from OwnBuffer import OwnBuffer
 
 args = list(sys.argv)[1:]
 args = list(map(int, args))
 
-buffer = queue.Queue(args[0])
+buffer = OwnBuffer(args[0])
 producer = []
 consumer = []
 
