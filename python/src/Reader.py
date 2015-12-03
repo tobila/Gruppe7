@@ -14,11 +14,14 @@ class Reader(threading.Thread):
         self.locListe=liste
 
     def run(self):
-        infile = open(self.locPath)
-        for line in infile:
-            self.locListe.append(line)
-         
-       
-        #print self.liste
-        #self.getMailList()   
-        infile.close()
+        try:
+            infile = open(self.locPath)
+            for line in infile:
+                self.locListe.append(line)
+             
+           
+            #print self.liste
+            #self.getMailList()   
+            infile.close()
+        except IOError:
+            print("Smth's wrong with the File")
