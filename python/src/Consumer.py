@@ -17,6 +17,6 @@ class Consumer(threading.Thread):
         prints the Consumer count and the consumed number, sleeps a random time
         '''
         while(True):
-            num = self.buffer.peek()
+            num = self.buffer.pop()
             print ("Consumer",self.count,"consumed", num)
             time.sleep(random.random())

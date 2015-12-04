@@ -26,7 +26,7 @@ class OwnBuffer():
         self.mutex.release()
         
     
-    def peek(self):
+    def pop(self):
         ''' Acquires the lock. If OwnBuffer is empty, wait() is called:
         -> thread releases the lock and blocks until notify() is called from another thread (wakeup).
         Removes the value from OwnBuffer, notifies if other thread is blocking and releases the lock
