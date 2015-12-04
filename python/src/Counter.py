@@ -1,27 +1,27 @@
-'''
-Created on 02.12.2015
 
-@author: Patrick
-'''
 import threading
 class Counter(threading.Thread):
-   
-    def __init__(self, liste):
+    '''
+    Counter inherits Thread
+    '''
+    '''
+    initialize local variable list to write in
+    parameter: list to write in
+    '''
+    def __init__(self, mailList):
         super(Counter,self).__init__()
-        self.locListe=liste
-
+        self.localMailList=mailList
+    '''
+    split each list item and check if the ending is ".edu(\n)"
+    '''
     def run(self):
            
-        zaehler=0  
-        zaehler1=0
-        #for line in liste:
-        #    if '.edu' in line:
-        #        zaehler+=1
-        #print(zaehler)
-        liste1=list()
-        for line in self.locListe:
-            liste1=line.split('.')
-            zaehler1+=1
-            if liste1[liste1.__len__()-1].__eq__('edu\n') or liste1[liste1.__len__()-1].__eq__('edu'):
-                zaehler+=1
-        print(zaehler1) 
+        counter=0   
+        counter1=0
+        splitList=list()
+        for line in self.localMailList:
+            splitList=line.split('.')
+            counter1+=1
+            if splitList[splitList.__len__()-1].__eq__('edu\n') or splitList[splitList.__len__()-1].__eq__('edu'):
+                counter+=1
+        print(counter) 

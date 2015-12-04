@@ -1,27 +1,26 @@
-'''
-Created on 02.12.2015
 
-@author: Patrick
-'''
 import threading
 class Reader(threading.Thread):
-   
-   
-   
-    def __init__(self, liste,path):
-        super(Reader,self).__init__()
+    '''
+    Reader inherits Thread
+    '''
+    
+    '''
+    initialize path and list to write in
+    '''
+    def __init__(self, mailList,path):
+        super(Reader,self).__init__()   
+        threading.Thread.__init__(self)
         self.locPath=path
-        self.locListe=liste
-
+        self.localMailList=mailList
+    '''
+    open file with given path and put every line in the given list
+    '''
     def run(self):
-        try:
+        try:                #exception-handling
             infile = open(self.locPath)
-            for line in infile:
-                self.locListe.append(line)
-             
-           
-            #print self.liste
-            #self.getMailList()   
+            for line in infile:         
+                self.localMailList.append(line)    
             infile.close()
-        except IOError:
+        except IOError:     #what happens when an IOError occurs
             print("Smth's wrong with the File")
