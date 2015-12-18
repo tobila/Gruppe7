@@ -15,26 +15,37 @@ namespace EBNFParser
 
         static void Main(string[] args)
         {
-            
-            System.IO.StreamReader sr = new System.IO.StreamReader("expression.txt");
-            String s;
-
-            ThreadPool.SetMaxThreads(3, 3);
-            ThreadPool.SetMinThreads(3, 3);
-            
-
-            while ((s= sr.ReadLine()) != null)
+            System.IO.StreamReader sr = null
+                ;
+            try
             {
-                EBNFParser parser = new EBNFParser(s);
-                ThreadPool.QueueUserWorkItem(parser.expression);
+                sr = new System.IO.StreamReader("expression.txt");
+            
+            
+                String s;
+
+                ThreadPool.SetMaxThreads(3, 3);
+                ThreadPool.SetMinThreads(3, 3);
+            
+
+                while ((s= sr.ReadLine()) != null)
+                {
+                    EBNFParser parser = new EBNFParser(s);
+                    ThreadPool.QueueUserWorkItem(parser.expression);
 
                 
 
 
+                }
+
             }
-         //   WaitHandle.WaitAll(100,1);
-            
-           
+            catch (Exception e )
+            {
+                Console.WriteLine("File not found!");
+            }
+            //   WaitHandle.WaitAll(100,1);
+
+
 
 
             Console.ReadLine();
@@ -44,20 +55,20 @@ namespace EBNFParser
 
 
 
-    public class EBNFParser
+    public class EBNFParser 
     {
         private LinkedList<char> exp;
         private int bracketLeftCount = 0;
         private int bracketRightCount = 0;
         private String backUp;
 
-        public EBNFParser(String s)
+        public EBNFParser(String s) // Construktor with new linkedList
         {
             exp = new LinkedList<char>(s.ToCharArray());
             backUp = s;
         }
 
-        public void expression(Object o)
+        public void expression(Object o)  //check Element for RoundbracketLeft, constant, Digit or Variable else Exception
         {
             try
             {
@@ -97,7 +108,7 @@ namespace EBNFParser
 
        
 
-        private void roundBracketLeft()
+        private void roundBracketLeft() // check next Element after an roundbracket left if RroundbracketLeft, Digitor Variable and remove it else Exception
         {
             if (exp.Count() != 0)
             {
@@ -123,7 +134,7 @@ namespace EBNFParser
         }
 
 
-        private void constant()
+        private void constant() // check next element if Valide digit and remove it or roundBracketRight or ArithOperator else Exception  
         {
            
             if (exp.Count() != 0)
@@ -133,7 +144,6 @@ namespace EBNFParser
                     exp.RemoveFirst();
                     constant();
                 }
-
 
                 else if (isRoundBracketRight())
                 {
@@ -152,7 +162,7 @@ namespace EBNFParser
         }
 
 
-        private void arithOperator()
+        private void arithOperator() // Check next Element for an reoundBracketLeft and remove it  else Exception
         {
 
             if (exp.Count() != 0)
@@ -174,7 +184,7 @@ namespace EBNFParser
 
 
 
-        private void variable()
+        private void variable() // Check next Element for an Variable or artihOperator and remove it or roundBracketRight else exception
         {
             if (exp.Count() != 0)
             {
@@ -201,7 +211,7 @@ namespace EBNFParser
 
 
 
-        private void roundBracketRight()
+        private void roundBracketRight() // check next element for an roundBracketRight and remove it or artihOperator  else Exception
         {
             if (exp.Count() != 0)
             {
@@ -227,18 +237,18 @@ namespace EBNFParser
 
 
 
-        private bool isRoundBracketLeft()
+        private bool isRoundBracketLeft() //check if the first Element of the List is an roundBracketLeft
         {
             return exp.First.Value == '(';
         }
 
-        private bool isRoundBracketRight()
+        private bool isRoundBracketRight()// check if the first Element of the List is an roundBracketRight
         {
             return exp.First.Value == ')';
         }
 
 
-        private bool isArithOperator()
+        private bool isArithOperator() // check the value of artihmetik Operator
         {
             if (exp.Count() != 0)
             {
@@ -267,7 +277,7 @@ namespace EBNFParser
 
 
 
-        private bool isDigit()
+        private bool isDigit() // Check value of Digit from 0 to 9
         {
             if (exp.Count() != 0)
             {
@@ -294,7 +304,7 @@ namespace EBNFParser
             }
         }
 
-        private bool isVariable()
+        private bool isVariable() //Check valid of Variable x,y,z
         {
             if (exp.Count() != 0)
             {
@@ -314,7 +324,7 @@ namespace EBNFParser
             }
         }
 
-        private bool isBracketsCountEquals()
+        private bool isBracketsCountEquals() // check if bracketLeftCoundt has the same count as backetRightCount
         {
             return bracketLeftCount == bracketRightCount;
         }
